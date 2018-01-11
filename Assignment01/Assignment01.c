@@ -16,9 +16,12 @@ int main()
 		return -1;
 	}
 	
-	char textInput[100];
+	fseek(file, 0, SEEK_END);
+	long numChar = ftell(file);
+	
+	char textInput[] = malloc((numChar + 1) * sizeof(char));
 	while (!feof(file)) {
-		size_t count = fread(textInput, 1, 100, file);
+		size_t count = fread(textInput, 1, sizeof(char), file);
 		if (count < 1)
 			break;
 		//text[count] = "\0";	
