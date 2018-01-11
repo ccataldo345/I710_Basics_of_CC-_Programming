@@ -16,10 +16,9 @@ int main()
 		return -1;
 	}
 	
-	fseek(file, 0, SEEK_END);
 	long numChar = ftell(file);
-	
 	char textInput[] = malloc((numChar + 1) * sizeof(char));
+	
 	while (!feof(file)) {
 		size_t count = fread(textInput, 1, sizeof(char), file);
 		if (count < 1)
@@ -75,6 +74,7 @@ int main()
     
     //############################################
     // sort pairs
+    
     printf("Sorted pairs: ");
     int i, min0, min1;
 
@@ -106,6 +106,7 @@ int main()
 
 	//############################################
 	// print operation (valueP1 - value P0)
+	
 	printf("\n"); 
      
     printf("Output text: "); 
