@@ -6,30 +6,51 @@ int main()
 
 {
     //############################################
-    //read input file
-	char fileName[] = "input.txt";
+    //count characters of input file
+    
+    char fileName[] = "input.txt";
 	
-	FILE* file = fopen(fileName, "r");
+	FILE* fileCount = fopen(fileName, "r");
 
-	if (file == NULL) {
+	if (fileCount == NULL) {
 		printf("The file does not exist!\n");
 		return -1;
 	}
+		
+	int fileSize=-1;
 	
-	long numChar = ftell(file);
-	char textInput[] = malloc((numChar + 1) * sizeof(char));
+	while (!feof(fileCount)) {
+		int c = fgetc(fileCount);
+		fileSize += 1;
+	}
+    
+    printf("\nFile size: %d characters\n", fileSize);	//print array text
+    
+    fclose(fileCount);
+	fileCount = NULL;
 	
-	while (!feof(file)) {
-		size_t count = fread(textInput, 1, sizeof(char), file);
+	//############################################
+    //read input file and create a dynamic-size array
+	
+	FILE* fileRead = fopen(fileName, "r");
+	
+	if (fileRead == NULL) {
+	printf("The file does not exist!\n");
+	return -1;
+	}
+	
+	char textInput[fileSize];
+	
+	while (!feof(fileRead)) {
+		size_t count = fread(textInput, 1, fileSize, fileRead);
 		if (count < 1)
 			break;
-		//text[count] = "\0";	
 	}
 	
 	printf("\nInput text: %s\n", textInput);	//print array text
   
-	fclose(file);
-	file = NULL;
+	fclose(fileRead);
+	fileRead = NULL;
 	
 	//############################################
 	// convert char array textInput into Int array
@@ -59,7 +80,7 @@ int main()
         p = strtok(NULL, ";");
     }
     
-    printf("Int array pairs[%d][2] = {", pairsCount);
+    printf("\nInt array pairs[%d][2] = {", pairsCount);
     for ( int i=0 ; i<pairsCount; i++ ) {
 		if (i==pairsCount-1) {
 			// print last number without coma
@@ -75,7 +96,7 @@ int main()
     //############################################
     // sort pairs
     
-    printf("Sorted pairs: ");
+    printf("\nSorted pairs: ");
     int i, min0, min1;
 
     for (i=0; i<pairsCount; i++) {
@@ -109,7 +130,7 @@ int main()
 	
 	printf("\n"); 
      
-    printf("Output text: "); 
+    printf("\nOutput text: "); 
     for ( i=0; i<pairsCount-1; i++ ) {
 		int outputText = pairs[i+1][1]-pairs[i][1];
 		if (i==pairsCount-2) {
