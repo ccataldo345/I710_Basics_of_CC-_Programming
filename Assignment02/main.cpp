@@ -12,31 +12,71 @@ using namespace std;
 int getMenu();
 int printList();
 int inputPizzaName();
-int vector01();
 
 
+// structs
 struct Recipe
 {
   string name;
   vector<string> ingredients;
 };
 
+struct Ingredients
+{
+  string name;
+  int quantity;
+  int priceType;
+};
+
+struct Prices
+{
+  int id;
+  double price;
+};
+
+// nlohmann::json
 void from_json(nlohmann::json const& json, Recipe& rec)
 {
     rec.name = json.at("name").get<string>();
     rec.ingredients = json.at("ingredients").get<vector<string>>();
 }
 
-int vector01(){
+void from_json(nlohmann::json const& json, Ingredients& ing)
+{
+    ing.name = json.at("name").get<string>();
+    ing.quantity = json.at("quantity").get<int>();
+    ing.priceType = json.at("priceType").get<int>();
+}
+
+void from_json(nlohmann::json const& json, Prices& pri)
+{
+    pri.id = json.at("id").get<int>();
+    pri.price = json.at("price").get<double>();
+}
+
+// read json files
+void recipes(){
 	ifstream simpleDataFile{ "recipes.json" };
     nlohmann::json simpleJson;
     simpleDataFile >> simpleJson;
     simpleDataFile.close();
+}
 
-    //vector<Recipe> recs = simpleJson;
-	}
+void ingredients(){
+	ifstream simpleDataFile{ "ingredients.json" };
+    nlohmann::json simpleJson;
+    simpleDataFile >> simpleJson;
+    simpleDataFile.close();
+}
 
+void prices(){
+	ifstream simpleDataFile{ "prices.json" };
+    nlohmann::json simpleJson;
+    simpleDataFile >> simpleJson;
+    simpleDataFile.close();
+}
 
+// main
 int main(){
 
 	int menu = getMenu();
@@ -85,12 +125,12 @@ int inputPizzaName(){
 	pizzaToBuy[0] = toupper(pizzaToBuy[0]);	//first letter capital
 	cout << "You typed: " << pizzaToBuy << endl;
 	
-	ifstream simpleDataFile{ "recipes.json" };
-    nlohmann::json simpleJson;
-    simpleDataFile >> simpleJson;
-    simpleDataFile.close();
+	ifstream simpleDataFileR{ "recipes.json" };
+    nlohmann::json simpleJsonR;
+    simpleDataFileR >> simpleJsonR;
+    simpleDataFileR.close();
 
-    vector<Recipe> recs = simpleJson;
+    vector<Recipe> recs = simpleJsonR;
 
 	bool check = false;
 	for (auto i : recs) { 
@@ -104,6 +144,37 @@ int inputPizzaName(){
 		cout << "This pizza is not in the list, please try again";
 	else 
 		cout << "You want to buy a pizza " << pizzaToBuy << endl;
+	cout << endl;
+	
+	
+	//print price
+	ifstream simpleDataFileI{ "ingredients.json" };
+    nlohmann::json simpleJsonI;
+    simpleDataFileI >> simpleJsonI;
+    simpleDataFileI.close();
+    
+    ifstream simpleDataFileP{ "prices.json" };
+    nlohmann::json simpleJsonP;
+    simpleDataFileP >> simpleJsonP;
+    simpleDataFileP.close();
+
+    vector<Ingredients> ings = simpleJsonI;
+
+    vector<Prices> prices = simpleJsonP;
+	
+	double totalPrice;
+	for (auto i : recs)  
+		if (i.name == pizzaToBuy) 
+			//cout << i.name << endl;
+			for (auto& j : i.ingredients)
+				//cout << j << endl;
+				for (auto k : ings)
+					if (k.name == j)
+						//cout << k.priceType << endl;
+						for (auto l : prices)
+							if (l.id == k.priceType)
+								totalPrice += l.price;
+	cout << "Total price: " << totalPrice << endl;
 	cout << endl;
 }
 
