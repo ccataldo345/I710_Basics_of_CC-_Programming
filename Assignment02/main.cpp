@@ -81,7 +81,7 @@ int main(){
 
 	int menu = getMenu();
 	
-	while (menu != 4) {
+	while (menu != 3) {
 		switch (menu) {
 			case 1:
 				printList();
@@ -118,37 +118,23 @@ int printList(){
 	
 // print pizza to buy input function
 int inputPizzaName(){
+	
 	string pizzaToBuy;
 	cout << endl;
 	cout << "Type the name of the pizza to buy:" << endl;
 	cin >> pizzaToBuy;
 	pizzaToBuy[0] = toupper(pizzaToBuy[0]);	//first letter capital
+	cout << endl;
 	cout << "You typed: " << pizzaToBuy << endl;
+	cout << endl;
 	
+	// read json files
 	ifstream simpleDataFileR{ "recipes.json" };
     nlohmann::json simpleJsonR;
     simpleDataFileR >> simpleJsonR;
     simpleDataFileR.close();
-
-    vector<Recipe> recs = simpleJsonR;
-
-	bool check = false;
-	for (auto i : recs) { 
-		if (i.name == pizzaToBuy) {
-				check = true;
-				break;
-		}
-	}
-
-	if (check == false)
-		cout << "This pizza is not in the list, please try again";
-	else 
-		cout << "You want to buy a pizza " << pizzaToBuy << endl;
-	cout << endl;
-	
-	
-	//print price
-	ifstream simpleDataFileI{ "ingredients.json" };
+    
+    ifstream simpleDataFileI{ "ingredients.json" };
     nlohmann::json simpleJsonI;
     simpleDataFileI >> simpleJsonI;
     simpleDataFileI.close();
@@ -158,34 +144,88 @@ int inputPizzaName(){
     simpleDataFileP >> simpleJsonP;
     simpleDataFileP.close();
 
+
+    // create vectors from json files
+    vector<Recipe> recs = simpleJsonR;
+    
     vector<Ingredients> ings = simpleJsonI;
 
     vector<Prices> prices = simpleJsonP;
-	
-	double totalPrice;
-	for (auto i : recs)  
+    
+
+	// check if pizza name input is in pizza list
+	bool check = false;
+	for (auto i : recs) { 
+		if (i.name == pizzaToBuy) {
+				check = true;
+				break;
+		}
+	}
+	if (check == false)
+		cout << "This pizza is not in the list, please try again";
+	else 
+		cout << "Ok, you want to buy a pizza " << pizzaToBuy << ", which is in our pizza list!" << endl;
+	cout << endl;
+
+	// check if all ingredients are available in the list 
+	bool checkIng = true;
+	for (auto i : recs) 
 		if (i.name == pizzaToBuy) 
 			//cout << i.name << endl;
 			for (auto& j : i.ingredients)
 				//cout << j << endl;
 				for (auto k : ings)
-					if (k.name == j)
-						//cout << k.priceType << endl;
-						for (auto l : prices)
-							if (l.id == k.priceType)
-								totalPrice += l.price;
-	cout << "Total price: " << totalPrice << endl;
-	cout << endl;
+					if (k.name == j) 
+						if (k.quantity <= 0) {
+						checkIng = false;
+						cout << "Unfortunately the ingredient '" << k.name << "' is not availabe :-(" << endl;
+						cout << endl;
+						break;
+					}
+	if (checkIng == false) {
+		cout << "Sorry, this pizza can not be bought! Try again or exit." << endl;
+	}
+	
+	else {
+
+		//print price
+		double totalPrice;
+		for (auto i : recs)  
+			if (i.name == pizzaToBuy) 
+				//cout << i.name << endl;	// print name of pizza
+				for (auto& j : i.ingredients)
+					//cout << j << endl;	// print name of ingredients
+					for (auto k : ings)
+						if (k.name == j)
+							//cout << k.priceType << endl;	// print price type
+							for (auto l : prices)
+								if (l.id == k.priceType)
+									totalPrice += l.price;	// sum prices of each ingredient
+		cout << "Total price: " << totalPrice << endl;
+		cout << endl;
+		
+		
+		// remove ingredients from list
+		for (auto i : recs) 
+			if (i.name == pizzaToBuy) 
+				//cout << i.name << endl;
+				for (auto& j : i.ingredients)
+					//cout << j << endl;
+					for (auto k : ings)
+						if (k.name == j) {
+							k.quantity -= 1;
+							cout << k.quantity << endl;
+						}
+	}
 }
 
 // menu function
 int getMenu(){
 	cout << "MENU: " << endl;
 	int choice;
-	cout << "1 - print pizza list" << endl;
+	cout << "1 - Print pizza list" << endl;
 	cout << "2 - Buy pizza" << endl;
-	cout << "3 - aaaa" << endl;
-	cout << "4 - exit program" << endl;
+	cout << "3 - Exit the program" << endl;
 	
 	cin >> choice;
 	return choice;
