@@ -5,13 +5,37 @@
 #include <iostream>
 #include <string>
 
-#include <jsoncpp/json/json.h>
+#include "./json.hpp"
 
 using namespace std;
 
 int getMenu();
 int printList();
 int inputPizzaName();
+int vector01();
+
+
+struct Recipe
+{
+  string name;
+  vector<string> ingredients;
+};
+
+void from_json(nlohmann::json const& json, Recipe& rec)
+{
+    rec.name = json.at("name").get<string>();
+    rec.ingredients = json.at("ingredients").get<vector<string>>();
+}
+
+int vector01(){
+	ifstream simpleDataFile{ "recipes.json" };
+    nlohmann::json simpleJson;
+    simpleDataFile >> simpleJson;
+    simpleDataFile.close();
+
+    //vector<Recipe> recs = simpleJson;
+	}
+
 
 int main(){
 
@@ -33,45 +57,55 @@ int main(){
 
 // print list function
 int printList(){
-	ifstream recipes{ "recipes.json" };
-	Json::Reader reader;
-    Json::Value obj;
-    reader.parse(recipes, obj); 
+	// print ingredients
+	ifstream simpleDataFile{ "recipes.json" };
+    nlohmann::json simpleJson;
+    simpleDataFile >> simpleJson;
+    simpleDataFile.close();
+
+    vector<Recipe> recs = simpleJson;
+    
+    cout << endl;
+    cout << "Pizza list: " << endl;
 	
+	for (auto i : recs) { 
+		cout << "- " << i.name << ": ";
+		for (auto& j : i.ingredients) 
+			cout << j << ", ";
 	cout << endl;
-	cout << "Pizza list: " << endl;
-	for (Json::Value::ArrayIndex i = 0; i != obj.size(); i++)
-		if (obj[i].isMember("name"))
-			cout << obj[i]["name"].asString() << endl;
-	cout << endl;
+	}
 }
 	
 // print pizza to buy input function
 int inputPizzaName(){
 	string pizzaToBuy;
+	cout << endl;
 	cout << "Type the name of the pizza to buy:" << endl;
 	cin >> pizzaToBuy;
+	pizzaToBuy[0] = toupper(pizzaToBuy[0]);	//first letter capital
+	cout << "You typed: " << pizzaToBuy << endl;
 	
-	ifstream recipes{ "recipes.json" };
-	Json::Reader reader;
-    Json::Value obj;
-    reader.parse(recipes, obj); 
-	
+	ifstream simpleDataFile{ "recipes.json" };
+    nlohmann::json simpleJson;
+    simpleDataFile >> simpleJson;
+    simpleDataFile.close();
+
+    vector<Recipe> recs = simpleJson;
+
 	bool check = false;
-	for (Json::Value::ArrayIndex i = 0; i != obj.size(); i++) {
-		if (obj[i].isMember("name")) {
-			if (obj[i]["name"].asString() == pizzaToBuy) {
+	for (auto i : recs) { 
+		if (i.name == pizzaToBuy) {
 				check = true;
 				break;
-			}
 		}
 	}
+
 	if (check == false)
 		cout << "This pizza is not in the list, please try again";
 	else 
 		cout << "You want to buy a pizza " << pizzaToBuy << endl;
 	cout << endl;
-}	
+}
 
 // menu function
 int getMenu(){
@@ -84,4 +118,4 @@ int getMenu(){
 	
 	cin >> choice;
 	return choice;
-	}
+}

@@ -9,16 +9,16 @@ int main()
     //count characters of input file
     
     char fileName[] = "input.txt";
-	
+
 	FILE* fileCount = fopen(fileName, "r");
 
 	if (fileCount == NULL) {
 		printf("The file does not exist!\n");
 		return -1;
 	}
-		
+
 	int fileSize=-1;
-	
+
 	while (!feof(fileCount)) {
 		int c = fgetc(fileCount);
 		fileSize += 1;
@@ -28,30 +28,30 @@ int main()
     
     fclose(fileCount);
 	fileCount = NULL;
-	
+
 	//############################################
     //read input file and create a dynamic-size array
-	
+
 	FILE* fileRead = fopen(fileName, "r");
-	
+
 	if (fileRead == NULL) {
 	printf("The file does not exist!\n");
 	return -1;
 	}
-	
+
 	char textInput[fileSize];
-	
+
 	while (!feof(fileRead)) {
 		size_t count = fread(textInput, 1, fileSize, fileRead);
 		if (count < 1)
 			break;
 	}
-	
+
 	printf("\nInput text: %s\n", textInput);	//print array text
   
 	fclose(fileRead);
 	fileRead = NULL;
-	
+
 	//############################################
 	// convert char array textInput into Int array
     
@@ -113,7 +113,7 @@ int main()
 			}
 		}
 	}
-	
+
 	// printing sorted array	
 	for (i=0; i <pairsCount; i++ ) {
 		if (i==pairsCount-1) {
@@ -144,7 +144,7 @@ int main()
 
 	//############################################
 	// print to file 
-	
+
 	FILE *fptr;
 
 	fptr = fopen("output.txt", "w"); 	// "w" = write to file
@@ -154,7 +154,7 @@ int main()
 		printf("Error!");
 		return 1;
 	}
-   	
+
 	for (int i=0; i<pairsCount-1; i++) {
 		int outputText = pairs[i+1][1]-pairs[i][1];
 		if (i == pairsCount-2) {
@@ -164,8 +164,8 @@ int main()
 			fprintf(fptr, "%d, ", outputText);
 		}
 	}
-	
+
 	fclose(fptr);
-		
+
 	return 0;
  }
