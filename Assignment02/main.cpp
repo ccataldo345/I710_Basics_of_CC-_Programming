@@ -93,6 +93,7 @@ int main(){
 	cout << endl;
 	menu = getMenu();
 	}
+	cout << endl << "Good bye!";
 }
 
 // print list function
@@ -161,8 +162,11 @@ int inputPizzaName(){
 				break;
 		}
 	}
-	if (check == false)
-		cout << "This pizza is not in the list, please try again";
+	
+	if (check == false) {
+		cout << "This pizza is not in the list, please try again." << endl;
+		return 0;
+	}
 	else 
 		cout << "Ok, you want to buy a pizza " << pizzaToBuy << ", which is in our pizza list!" << endl;
 	cout << endl;
@@ -189,6 +193,7 @@ int inputPizzaName(){
 	else {
 
 		//print price
+		double subtotal;
 		double totalPrice;
 		for (auto i : recs)  
 			if (i.name == pizzaToBuy) 
@@ -199,9 +204,13 @@ int inputPizzaName(){
 						if (k.name == j)
 							//cout << k.priceType << endl;	// print price type
 							for (auto l : prices)
-								if (l.id == k.priceType)
+								if (l.id == k.priceType) {
+									subtotal += l.price; 
 									totalPrice += l.price;	// sum prices of each ingredient
-		cout << "Total price: " << totalPrice << endl;
+								}
+		cout << "Pizza price: " << subtotal << endl;
+		subtotal = 0.0;						
+		cout << "Total bill amount: " << totalPrice << endl;
 		cout << endl;
 		
 		
@@ -214,14 +223,14 @@ int inputPizzaName(){
 					for (auto k : ings)
 						if (k.name == j) {
 							k.quantity -= 1;
-							cout << k.quantity << endl;
+							cout << k.name << ": " << k.quantity << endl;
 						}
-	}
-}
+	} 	// else {
+} 	// inputPizzaName(){
 
 // menu function
 int getMenu(){
-	cout << "MENU: " << endl;
+	cout << endl << "MENU: " << endl;
 	int choice;
 	cout << "1 - Print pizza list" << endl;
 	cout << "2 - Buy pizza" << endl;
