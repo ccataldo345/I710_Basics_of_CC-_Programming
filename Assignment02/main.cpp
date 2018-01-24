@@ -34,6 +34,7 @@ struct Prices
   double price;
 };
 
+
 // nlohmann::json
 void from_json(nlohmann::json const& json, Recipe& rec)
 {
@@ -54,6 +55,7 @@ void from_json(nlohmann::json const& json, Prices& pri)
     pri.price = json.at("price").get<double>();
 }
 
+/*
 // read json files
 void recipes(){
 	ifstream simpleDataFile{ "recipes.json" };
@@ -75,15 +77,44 @@ void prices(){
     simpleDataFile >> simpleJson;
     simpleDataFile.close();
 }
+*/
+double totalPrice;
 
-void removeIngredients(int &q) {
-	q -= 1;
-}
+// create vectors from json files
+vector<Recipe> recs;
 
+vector<Ingredients> ings;
+
+vector<Prices> prices;
+    
 // main
 int main(){
+	// read json files
+	ifstream simpleDataFileR{ "recipes.json" };
+    nlohmann::json simpleJsonR;
+    simpleDataFileR >> simpleJsonR;
+    simpleDataFileR.close();
+    
+    ifstream simpleDataFileI{ "ingredients.json" };
+    nlohmann::json simpleJsonI;
+    simpleDataFileI >> simpleJsonI;
+    simpleDataFileI.close();
+    
+    ifstream simpleDataFileP{ "prices.json" };
+    nlohmann::json simpleJsonP;
+    simpleDataFileP >> simpleJsonP;
+    simpleDataFileP.close();
+    
+    
+    vector<Recipe> recs2 = simpleJsonR;
+    vector<Ingredients> ings2 = simpleJsonI;
+	vector<Prices> prices2 = simpleJsonP;
+	
+	recs = recs2;
+	ings = ings2;
+	prices = prices2;
 
-	int menu = getMenu();
+    int menu = getMenu();
 	
 	while (menu != 3) {
 		switch (menu) {
@@ -102,14 +133,7 @@ int main(){
 
 // print list function
 int printList(){
-	// print ingredients
-	ifstream simpleDataFile{ "recipes.json" };
-    nlohmann::json simpleJson;
-    simpleDataFile >> simpleJson;
-    simpleDataFile.close();
-
-    vector<Recipe> recs = simpleJson;
-    
+	
     cout << endl;
     cout << "Pizza list: " << endl;
 	
@@ -120,7 +144,7 @@ int printList(){
 	cout << endl;
 	}
 }
-	
+		
 // print pizza to buy input function
 int inputPizzaName(){
 	
@@ -132,31 +156,6 @@ int inputPizzaName(){
 	cout << endl;
 	cout << "You typed: " << pizzaToBuy << endl;
 	cout << endl;
-	
-	// read json files
-	ifstream simpleDataFileR{ "recipes.json" };
-    nlohmann::json simpleJsonR;
-    simpleDataFileR >> simpleJsonR;
-    simpleDataFileR.close();
-    
-    ifstream simpleDataFileI{ "ingredients.json" };
-    nlohmann::json simpleJsonI;
-    simpleDataFileI >> simpleJsonI;
-    simpleDataFileI.close();
-    
-    ifstream simpleDataFileP{ "prices.json" };
-    nlohmann::json simpleJsonP;
-    simpleDataFileP >> simpleJsonP;
-    simpleDataFileP.close();
-
-
-    // create vectors from json files
-    vector<Recipe> recs = simpleJsonR;
-    
-    vector<Ingredients> ings = simpleJsonI;
-
-    vector<Prices> prices = simpleJsonP;
-    
 
 	// check if pizza name input is in pizza list
 	bool check = false;
@@ -198,7 +197,7 @@ int inputPizzaName(){
 
 		//print price
 		double subtotal = 0.0;
-		double totalPrice;
+		
 		for (auto i : recs)  
 			if (i.name == pizzaToBuy) 
 				//cout << i.name << endl;	// print name of pizza
@@ -223,11 +222,12 @@ int inputPizzaName(){
 		for (auto i : recs)
 			if (i.name == pizzaToBuy)
 				for (auto& j : i.ingredients)
-					for (auto k : ings)
-						if (k.name == j) {
-							int q = k.quantity;
-							removeIngredients(q);
-							cout << k.name << ": " << q << endl;
+					for (vector<Ingredients> ::iterator it = ings.begin(); it != ings.end(); ++it)
+						if ((*it ).name == j) {
+							(*it).quantity -= 1;
+							//int q = k.quantity;
+							//removeIngredients(k.quantity);
+							cout << (*it).name << ": " << (*it).quantity << endl;
 						}
 					
 	} 	// else {
@@ -235,6 +235,7 @@ int inputPizzaName(){
 
 // menu function
 int getMenu(){
+    
 	cout << endl << "MENU: " << endl;
 	int choice;
 	cout << "1 - Print pizza list" << endl;
@@ -243,4 +244,5 @@ int getMenu(){
 	
 	cin >> choice;
 	return choice;
+	
 }
