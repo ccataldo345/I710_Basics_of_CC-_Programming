@@ -55,29 +55,7 @@ void from_json(nlohmann::json const& json, Prices& pri)
     pri.price = json.at("price").get<double>();
 }
 
-/*
-// read json files
-void recipes(){
-	ifstream simpleDataFile{ "recipes.json" };
-    nlohmann::json simpleJson;
-    simpleDataFile >> simpleJson;
-    simpleDataFile.close();
-}
 
-void ingredients(){
-	ifstream simpleDataFile{ "ingredients.json" };
-    nlohmann::json simpleJson;
-    simpleDataFile >> simpleJson;
-    simpleDataFile.close();
-}
-
-void prices(){
-	ifstream simpleDataFile{ "prices.json" };
-    nlohmann::json simpleJson;
-    simpleDataFile >> simpleJson;
-    simpleDataFile.close();
-}
-*/
 double totalPrice;
 
 // create vectors from json files
@@ -87,8 +65,10 @@ vector<Ingredients> ings;
 
 vector<Prices> prices;
     
+
 // main
 int main(){
+	
 	// read json files
 	ifstream simpleDataFileR{ "recipes.json" };
     nlohmann::json simpleJsonR;
@@ -138,9 +118,20 @@ int printList(){
     cout << "Pizza list: " << endl;
 	
 	for (auto i : recs) { 
+		double pizzaPrice = 0.0;
 		cout << "- " << i.name << ": ";
-		for (auto& j : i.ingredients) 
+		for (auto& j : i.ingredients) { 
 			cout << j << ", ";
+			//print price
+			for (auto k : ings)
+				if (k.name == j)
+					//cout << k.priceType << endl;	// print price type
+					for (auto l : prices)
+						if (l.id == k.priceType) {
+							pizzaPrice += l.price; // sum prices of each ingredient
+						}
+		}
+	cout << " (price: " << pizzaPrice << ")" << endl;
 	cout << endl;
 	}
 	return 0;
@@ -221,19 +212,18 @@ int inputPizzaName(){
 		
 		
 		// remove ingredients from list
-		cout << "Remaining ingredients: " << endl;
-		
 		for (auto i : recs)
 			if (i.name == pizzaToBuy)
 				for (auto& j : i.ingredients)
 					for (vector<Ingredients> ::iterator it = ings.begin(); it != ings.end(); ++it)
 						if ((*it ).name == j) {
 							(*it).quantity -= 1;
-							//int q = k.quantity;
-							//removeIngredients(k.quantity);
-							cout << (*it).name << ": " << (*it).quantity << endl;
+							//cout << (*it).name << ": " << (*it).quantity << endl;
 						}
-					
+		
+		cout << "Remaining ingredients: " << endl;
+		for (vector<Ingredients> ::iterator it = ings.begin(); it != ings.end(); ++it)
+			cout << (*it).name << ": " << (*it).quantity << endl;
 	} 	// else {
 } 	// inputPizzaName(){
 
@@ -248,5 +238,4 @@ int getMenu(){
 	
 	cin >> choice;
 	return choice;
-	
 }
