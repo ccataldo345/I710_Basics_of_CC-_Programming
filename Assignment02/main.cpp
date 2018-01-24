@@ -143,6 +143,7 @@ int printList(){
 			cout << j << ", ";
 	cout << endl;
 	}
+	return 0;
 }
 		
 // print pizza to buy input function
@@ -175,19 +176,22 @@ int inputPizzaName(){
 	cout << endl;
 
 	// check if all ingredients are available in the list 
+	vector<Ingredients> ings2 = ings;
 	bool checkIng = true;
 	for (auto i : recs) 
 		if (i.name == pizzaToBuy) 
 			//cout << i.name << endl;
 			for (auto& j : i.ingredients)
 				//cout << j << endl;
-				for (auto k : ings)
-					if (k.name == j) 
-						if (k.quantity <= 0) {
-						checkIng = false;
-						cout << "Unfortunately the ingredient '" << k.name << "' is not availabe :-(" << endl;
-						cout << endl;
-						break;
+				for (vector<Ingredients> ::iterator it = ings2.begin(); it != ings2.end(); ++it)
+					if ((*it).name == j) {
+						(*it).quantity -= 1; 
+						if ((*it).quantity < 0) {
+							checkIng = false;
+							cout << "Unfortunately the ingredient '" << (*it).name << "' is not availabe :-(" << endl;
+							cout << endl;
+							break;
+						}
 					}
 	if (checkIng == false) {
 		cout << "Sorry, this pizza can not be bought! Try again or exit." << endl;
