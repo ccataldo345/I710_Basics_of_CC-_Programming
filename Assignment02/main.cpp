@@ -76,6 +76,10 @@ void prices(){
     simpleDataFile.close();
 }
 
+void removeIngredients(int &q) {
+	q -= 1;
+}
+
 // main
 int main(){
 
@@ -167,7 +171,7 @@ int inputPizzaName(){
 		cout << "This pizza is not in the list, please try again." << endl;
 		return 0;
 	}
-	else 
+	else
 		cout << "Ok, you want to buy a pizza " << pizzaToBuy << ", which is in our pizza list!" << endl;
 	cout << endl;
 
@@ -193,7 +197,7 @@ int inputPizzaName(){
 	else {
 
 		//print price
-		double subtotal;
+		double subtotal = 0.0;
 		double totalPrice;
 		for (auto i : recs)  
 			if (i.name == pizzaToBuy) 
@@ -205,26 +209,27 @@ int inputPizzaName(){
 							//cout << k.priceType << endl;	// print price type
 							for (auto l : prices)
 								if (l.id == k.priceType) {
-									subtotal += l.price; 
-									totalPrice += l.price;	// sum prices of each ingredient
+									subtotal += l.price; // sum prices of each ingredient
+									totalPrice += l.price;	
 								}
 		cout << "Pizza price: " << subtotal << endl;
-		subtotal = 0.0;						
 		cout << "Total bill amount: " << totalPrice << endl;
 		cout << endl;
 		
 		
 		// remove ingredients from list
-		for (auto i : recs) 
-			if (i.name == pizzaToBuy) 
-				//cout << i.name << endl;
+		cout << "Remaining ingredients: " << endl;
+		
+		for (auto i : recs)
+			if (i.name == pizzaToBuy)
 				for (auto& j : i.ingredients)
-					//cout << j << endl;
 					for (auto k : ings)
 						if (k.name == j) {
-							k.quantity -= 1;
-							cout << k.name << ": " << k.quantity << endl;
+							int q = k.quantity;
+							removeIngredients(q);
+							cout << k.name << ": " << q << endl;
 						}
+					
 	} 	// else {
 } 	// inputPizzaName(){
 
